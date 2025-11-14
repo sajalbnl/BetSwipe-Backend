@@ -7,7 +7,7 @@ const userCategorySchema = new mongoose.Schema({
         unique:true
     },
     selectedCategories: [String],
-})
+}, { timestamps: true })
 
 const UserCategory = mongoose.model('UserCategory',userCategorySchema);
 
