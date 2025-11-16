@@ -8,28 +8,79 @@ categoryRouter.post("/save", async (req, res) => {
   try {
     const { userId, selectedCategories } = req.body;
 
-    // Upsert (create or update)
+    // Validation
+    if (!userId) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'userId is required' 
+      });
+    }
+    if (!Array.isArray(selectedCategories) || selectedCategories.length === 0) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'At least one category must be selected' 
+      });
+    }
+
+    // Upsert user categories
     const data = await UserCategory.findOneAndUpdate(
       { userId },
-      { selectedCategories },
-      { upsert: true, new: true }
+      { 
+        userId,
+        selectedCategories,
+        updatedAt: new Date()
+      },
+      { 
+        upsert: true, 
+        new: true,
+        runValidators: true
+      }
     );
+    console.log(`Categories saved for user ${userId}:`, selectedCategories);
 
-    res.json({ success: true, data });
+    res.status(200).json({ 
+      success: true, 
+      message: 'Categories saved successfully',
+      data 
+    });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false });
+   console.error('Error saving categories:', err);
+    res.status(500).json({ 
+      success: false,
+      message: 'Failed to save categories',
+      error: err.message 
+    });
   }
 });
 
 categoryRouter.get("/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
+    if (!userId) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'userId is required' 
+      });
+    }
     const data = await UserCategory.findOne({ userId });
-    res.json({ success: true, data });
+    if (!data) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'No categories found for this user',
+        data: null 
+      });
+    }
+    res.status(200).json({ 
+      success: true, 
+      data 
+    });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false });
+    console.error('Error fetching categories:', err);
+    res.status(500).json({ 
+      success: false,
+      message: 'Failed to fetch categories',
+      error: err.message 
+    });
   }
 });
 
