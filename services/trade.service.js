@@ -9,7 +9,7 @@ class TradeService {
      * Execute a trade
      */
     async executeTrade(params) {
-        const { privyUserId, marketId, side, amount, outcome, marketData } = params;
+        const { privyUserId, marketId,  amount, outcome, marketData } = params;
         
         let trade = null;
         

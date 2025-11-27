@@ -162,19 +162,19 @@ class PolymarketService {
     /**
      * Get user positions from Polymarket
      */
-    async getUserPositions(address) {
-        try {
-            // This would typically call Polymarket's positions API
-            // Placeholder for now
-            return {
-                success: true,
-                positions: []
-            };
-        } catch (error) {
-            console.error('Error getting user positions:', error);
-            throw error;
-        }
-    }
+    // async getUserPositions(address) {
+    //     try {
+    //         // This would typically call Polymarket's positions API
+    //         // Placeholder for now
+    //         return {
+    //             success: true,
+    //             positions: []
+    //         };
+    //     } catch (error) {
+    //         console.error('Error getting user positions:', error);
+    //         throw error;
+    //     }
+    // }
 }
 
 export default new PolymarketService();
