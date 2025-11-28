@@ -1,4 +1,4 @@
-import { getClobClient, SIDES, getTokenId } from '../config/polymarket.js';
+import { getClobClient, SIDES,  } from '../config/polymarket.js';
 import signerService from './signer.service.js';
 import { parseUSDC } from '../config/blockchain.js';
 
@@ -11,7 +11,7 @@ class PolymarketService {
      * Place a market order
      */
     async placeMarketOrder(params) {
-        const { privyUserId, marketId, side, amount, outcome, tokenId } = params;
+        const { privyUserId, marketId, side, amount,  tokenId } = params;
 
         try {
             // Get session signer
@@ -135,7 +135,7 @@ class PolymarketService {
     /**
      * Get market price
      */
-    async getMarketPrice(marketId, outcome) {
+    async getMarketPrice(marketId, ) {
         try {
             const orderbook = await this.client.getOrderBook(marketId);
             
