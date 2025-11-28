@@ -24,6 +24,7 @@ export const POLYGON_CHAIN_ID = parseInt(process.env.POLYGON_CHAIN_ID || '137');
 // Privy configs
 export const PRIVY_APP_ID = process.env.PRIVY_APP_ID;
 export const PRIVY_APP_SECRET = process.env.PRIVY_APP_SECRET;
+export const PRIVY_AUTHORIZATION_KEY = process.env.PRIVY_AUTHORIZATION_KEY;
 
 // Polymarket configs
 export const POLYMARKET_API_KEY = process.env.POLYMARKET_API_KEY;

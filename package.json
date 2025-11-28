@@ -16,6 +16,7 @@
   "type": "module",
   "dependencies": {
     "@polymarket/clob-client": "github:polymarket/clob-client",
+    "@privy-io/node": "^0.6.1",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "ethers": "^6.15.0",
