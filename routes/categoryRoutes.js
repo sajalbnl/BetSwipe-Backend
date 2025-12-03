@@ -6,37 +6,37 @@ const categoryRouter = express.Router();
 // POST - Save selected categories
 categoryRouter.post("/save", async (req, res) => {
   try {
-    const { userId, selectedCategories } = req.body;
+    const { privyUserId, selectedCategories } = req.body;
 
     // Validation
-    if (!userId) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'userId is required' 
+    if (!privyUserId) {
+      return res.status(400).json({
+        success: false,
+        message: 'privyUserId is required'
       });
     }
     if (!Array.isArray(selectedCategories) || selectedCategories.length === 0) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'At least one category must be selected' 
+      return res.status(400).json({
+        success: false,
+        message: 'At least one category must be selected'
       });
     }
 
     // Upsert user document with categories
     const data = await User.findOneAndUpdate(
-      { userId },
-      { 
-        userId,
+      { privyUserId },
+      {
+        privyUserId,
         selectedCategories,
         updatedAt: new Date()
       },
-      { 
-        upsert: true, 
+      {
+        upsert: true,
         new: true,
         runValidators: true
       }
     );
-    console.log(`Categories saved for user ${userId}:`, selectedCategories);
+    console.log(`Categories saved for user ${privyUserId}:`, selectedCategories);
 
     res.status(200).json({ 
       success: true, 
@@ -53,16 +53,16 @@ categoryRouter.post("/save", async (req, res) => {
   }
 });
 
-categoryRouter.get("/:userId", async (req, res) => {
+categoryRouter.get("/:privyUserId", async (req, res) => {
   try {
-    const { userId } = req.params;
-    if (!userId) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'userId is required' 
+    const { privyUserId } = req.params;
+    if (!privyUserId) {
+      return res.status(400).json({
+        success: false,
+        message: 'privyUserId is required'
       });
     }
-  const data = await User.findOne({ userId });
+    const data = await User.findOne({ privyUserId });
     if (!data) {
       return res.status(404).json({ 
         success: false, 

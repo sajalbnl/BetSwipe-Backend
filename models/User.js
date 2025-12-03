@@ -1,18 +1,11 @@
 import mongoose from 'mongoose';
 
 const userSchema = new mongoose.Schema({
-    // Primary canonical user id used across the app
-    userId: {
+    // Primary user id from Privy - used across the app
+    privyUserId: {
         type: String,
         required: true,
         unique: true,
-        index: true
-    },
-    // Optional external/privy id (kept unique when present)
-    privyUserId: {
-        type: String,
-        unique: true,
-        sparse: true,
         index: true
     },
     polygonWalletAddress: {
@@ -63,7 +56,6 @@ const userSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 // Useful indexes
-userSchema.index({ userId: 1 });
 userSchema.index({ privyUserId: 1 });
 userSchema.index({ polygonWalletAddress: 1 });
 

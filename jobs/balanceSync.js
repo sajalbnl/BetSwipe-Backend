@@ -90,7 +90,7 @@ class BalanceSync {
             } catch (error) {
                 results.failed++;
                 results.errors.push({
-                    userId: wallet.privyUserId,
+                    privyUserId: wallet.privyUserId,
                     error: error.message
                 });
                 logger.error(`Failed to update balance for ${wallet.privyUserId}:`, error);

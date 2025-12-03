@@ -61,7 +61,7 @@ class DepositDetector {
                 return;
             }
 
-            // Create address to userId map
+            // Create address to privyUserId map
             const addressMap = {};
             wallets.forEach(w => {
                 addressMap[w.polygonWalletAddress.toLowerCase()] = w.privyUserId;
