@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import UserWallet from '../models/UserWallet.js';
+import User from '../models/User.js';
 import { provider, usdcContract, formatUSDC, formatMATIC } from '../config/blockchain.js';
 
 class WalletService {
@@ -9,7 +9,7 @@ class WalletService {
     async getOrCreateWallet(privyUserId) {
         try {
             // Check if wallet exists
-            let wallet = await UserWallet.findOne({ privyUserId });
+            let wallet = await User.findOne({ privyUserId });
             
             if (wallet) {
                 return {
@@ -27,7 +27,7 @@ class WalletService {
             const newWallet = ethers.Wallet.createRandom();
             
             // Save to database
-            wallet = await UserWallet.create({
+            wallet = await User.create({
                 privyUserId,
                 polygonWalletAddress: newWallet.address,
                 depositAddress: newWallet.address, // Same as wallet for now
@@ -57,7 +57,7 @@ class WalletService {
      */
     async getWalletBalance(privyUserId) {
         try {
-            const wallet = await UserWallet.findOne({ privyUserId });
+            const wallet = await User.findOne({ privyUserId });
             
             if (!wallet) {
                 throw new Error('Wallet not found');
@@ -96,7 +96,7 @@ class WalletService {
      */
     async updateAllBalances() {
         try {
-            const wallets = await UserWallet.find({ isActive: true })
+            const wallets = await User.find({ isActive: true })
                 .limit(100) // Process in batches
                 .sort({ lastBalanceUpdate: 1 }); // Update oldest first
 
@@ -133,7 +133,7 @@ class WalletService {
      * Get wallet by address
      */
     async getWalletByAddress(address) {
-        return await UserWallet.findOne({ polygonWalletAddress: address });
+        return await User.findOne({ polygonWalletAddress: address });
     }
 }
 

@@ -1,4 +1,4 @@
-import UserWallet from '../models/UserWallet.js';
+import User from '../models/User.js';
 import { provider, usdcContract, formatUSDC, formatMATIC } from '../config/blockchain.js';
 import logger from '../utils/logger.js';
 
@@ -25,7 +25,7 @@ class BalanceSync {
 
             // Get wallets that need updating (oldest first)
             const cutoffTime = new Date(Date.now() - 60000); // 1 minute ago
-            const wallets = await UserWallet.find({
+            const wallets = await User.find({
                 isActive: true,
                 $or: [
                     { lastBalanceUpdate: { $lt: cutoffTime } },
@@ -108,7 +108,7 @@ class BalanceSync {
         try {
             const lowMaticThreshold = 0.1; // 0.1 MATIC
             
-            const lowBalanceWallets = await UserWallet.find({
+            const lowBalanceWallets = await User.find({
                 isActive: true,
                 maticBalance: { $lt: lowMaticThreshold },
                 usdcBalance: { $gt: 10 } // Has USDC but low MATIC

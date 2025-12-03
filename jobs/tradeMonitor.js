@@ -1,5 +1,5 @@
 import Trade from '../models/Trade.js';
-import UserWallet from '../models/UserWallet.js';
+import User from '../models/User.js';
 import polymarketService from '../services/polymarket.service.js';
 import positionService from '../services/position.service.js';
 import logger from '../utils/logger.js';
@@ -186,7 +186,7 @@ class TradeMonitor {
             await trade.save();
 
             // Refund the user
-            const wallet = await UserWallet.findOne({ privyUserId: trade.privyUserId });
+            const wallet = await User.findOne({ privyUserId: trade.privyUserId });
             if (wallet) {
                 wallet.usdcBalance += trade.amount;
                 wallet.totalTrades -= 1;
@@ -213,7 +213,7 @@ class TradeMonitor {
             await trade.save();
 
             // Refund the user
-            const wallet = await UserWallet.findOne({ privyUserId: trade.privyUserId });
+            const wallet = await User.findOne({ privyUserId: trade.privyUserId });
             if (wallet) {
                 wallet.usdcBalance += trade.amount;
                 wallet.totalTrades -= 1;

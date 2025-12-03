@@ -1,4 +1,4 @@
-import UserWallet from '../models/UserWallet.js';
+import User from '../models/User.js';
 import { provider, usdcContract, formatUSDC } from '../config/blockchain.js';
 import logger from '../utils/logger.js';
 import { ethers } from 'ethers';
@@ -52,7 +52,7 @@ class DepositDetector {
             logger.debug(`Checking blocks ${fromBlock} to ${toBlock} for deposits`);
 
             // Get all wallet addresses
-            const wallets = await UserWallet.find({ isActive: true })
+            const wallets = await User.find({ isActive: true })
                 .select('polygonWalletAddress privyUserId')
                 .lean();
 
@@ -151,7 +151,7 @@ class DepositDetector {
                 }
 
                 // Update wallet balance
-                const wallet = await UserWallet.findOne({ privyUserId });
+                const wallet = await User.findOne({ privyUserId });
                 if (wallet) {
                     const oldBalance = wallet.usdcBalance;
                     wallet.usdcBalance += parseFloat(deposit.amount);
@@ -183,7 +183,7 @@ class DepositDetector {
         // Listen for Transfer events in real-time
         usdcContract.on('Transfer', async (from, to, value, ) => {
             try {
-                const wallet = await UserWallet.findOne({ 
+                const wallet = await User.findOne({ 
                     polygonWalletAddress: to.toLowerCase() 
                 });
 

@@ -1,5 +1,5 @@
 import express from 'express';
-import UserCategory from '../models/UserCategory.js';
+import User from '../models/User.js';
 
 const categoryRouter = express.Router();
 
@@ -22,8 +22,8 @@ categoryRouter.post("/save", async (req, res) => {
       });
     }
 
-    // Upsert user categories
-    const data = await UserCategory.findOneAndUpdate(
+    // Upsert user document with categories
+    const data = await User.findOneAndUpdate(
       { userId },
       { 
         userId,
@@ -62,7 +62,7 @@ categoryRouter.get("/:userId", async (req, res) => {
         message: 'userId is required' 
       });
     }
-    const data = await UserCategory.findOne({ userId });
+  const data = await User.findOne({ userId });
     if (!data) {
       return res.status(404).json({ 
         success: false, 

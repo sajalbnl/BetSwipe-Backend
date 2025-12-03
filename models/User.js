@@ -1,16 +1,24 @@
 import mongoose from 'mongoose';
 
-const userWalletSchema = new mongoose.Schema({
-    privyUserId: {
+const userSchema = new mongoose.Schema({
+    // Primary canonical user id used across the app
+    userId: {
         type: String,
         required: true,
         unique: true,
         index: true
     },
+    // Optional external/privy id (kept unique when present)
+    privyUserId: {
+        type: String,
+        unique: true,
+        sparse: true,
+        index: true
+    },
     polygonWalletAddress: {
         type: String,
-        required: true,
-        unique: true
+        unique: true,
+        sparse: true
     },
     sessionSignerAddress: {
         type: String,
@@ -50,14 +58,15 @@ const userWalletSchema = new mongoose.Schema({
     isActive: {
         type: Boolean,
         default: true
-    }
+    },
+    selectedCategories: [String]
 }, { timestamps: true });
 
-// Indexes for efficient queries
-userWalletSchema.index({ privyUserId: 1 });
-userWalletSchema.index({ polygonWalletAddress: 1 });
-userWalletSchema.index({ lastBalanceUpdate: 1 });
+// Useful indexes
+userSchema.index({ userId: 1 });
+userSchema.index({ privyUserId: 1 });
+userSchema.index({ polygonWalletAddress: 1 });
 
-const UserWallet = mongoose.model('UserWallet', userWalletSchema);
+const User = mongoose.model('User', userSchema);
 
-export default UserWallet;
+export default User;

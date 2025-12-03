@@ -1,6 +1,6 @@
 import Trade from '../models/Trade.js';
 
-import UserWallet from '../models/UserWallet.js';
+import User from '../models/User.js';
 import polymarketService from './polymarket.service.js';
 import positionService from './position.service.js';
 
@@ -15,7 +15,7 @@ class TradeService {
         
         try {
             // Validate user wallet and balance
-            const wallet = await UserWallet.findOne({ privyUserId });
+            const wallet = await User.findOne({ privyUserId });
             if (!wallet) {
                 throw new Error('Wallet not found');
             }
@@ -154,7 +154,7 @@ class TradeService {
                         trade.status = 'CANCELLED';
                         
                         // Refund the user
-                        const wallet = await UserWallet.findOne({ privyUserId: trade.privyUserId });
+                        const wallet = await User.findOne({ privyUserId: trade.privyUserId });
                         if (wallet) {
                             wallet.usdcBalance += trade.amount;
                             await wallet.save();

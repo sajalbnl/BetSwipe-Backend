@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import UserWallet from '../models/UserWallet.js';
+import User from '../models/User.js';
 import { encrypt, decrypt } from '../utils/encryption.js';
 import { provider } from '../config/blockchain.js';
 
@@ -9,7 +9,7 @@ class SignerService {
      */
     async createSessionSigner(privyUserId, expiryDays = 7) {
         try {
-            const wallet = await UserWallet.findOne({ privyUserId });
+            const wallet = await User.findOne({ privyUserId });
             
             if (!wallet) {
                 throw new Error('Wallet not found for user');
@@ -53,7 +53,7 @@ class SignerService {
      */
     async getSessionSigner(privyUserId) {
         try {
-            const wallet = await UserWallet.findOne({ privyUserId });
+            const wallet = await User.findOne({ privyUserId });
             
             if (!wallet || !wallet.sessionSignerEncrypted) {
                 return null;
@@ -84,7 +84,7 @@ class SignerService {
      */
     async isSessionValid(privyUserId) {
         try {
-            const wallet = await UserWallet.findOne({ privyUserId });
+            const wallet = await User.findOne({ privyUserId });
             
             if (!wallet || !wallet.sessionSignerAddress) {
                 return false;
@@ -107,7 +107,7 @@ class SignerService {
      */
     async revokeSession(privyUserId) {
         try {
-            const wallet = await UserWallet.findOne({ privyUserId });
+            const wallet = await User.findOne({ privyUserId });
             
             if (!wallet) {
                 return { success: false, message: 'Wallet not found' };
@@ -133,7 +133,7 @@ class SignerService {
      */
     async getSessionInfo(privyUserId) {
         try {
-            const wallet = await UserWallet.findOne({ privyUserId });
+            const wallet = await User.findOne({ privyUserId });
             
             if (!wallet || !wallet.sessionSignerAddress) {
                 return null;
