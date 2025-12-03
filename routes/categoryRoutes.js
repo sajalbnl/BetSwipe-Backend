@@ -22,12 +22,13 @@ categoryRouter.post("/save", async (req, res) => {
       });
     }
 
-    // Upsert user document with categories
+    // Upsert user document with categories and set isOnboarded to true
     const data = await User.findOneAndUpdate(
       { privyUserId },
       {
         privyUserId,
         selectedCategories,
+        isOnboarded: true,
         updatedAt: new Date()
       },
       {
@@ -70,16 +71,16 @@ categoryRouter.get("/:privyUserId", async (req, res) => {
         data: null 
       });
     }
-    res.status(200).json({ 
-      success: true, 
-      data 
+    res.status(200).json({
+      success: true,
+      data
     });
   } catch (err) {
     console.error('Error fetching categories:', err);
-    res.status(500).json({ 
+    res.status(500).json({
       success: false,
       message: 'Failed to fetch categories',
-      error: err.message 
+      error: err.message
     });
   }
 });

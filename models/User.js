@@ -52,7 +52,11 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: true
     },
-    selectedCategories: [String]
+    selectedCategories: [String],
+    isOnboarded: {
+        type: Boolean,
+        default: false
+    }
 }, { timestamps: true });
 
 // Useful indexes

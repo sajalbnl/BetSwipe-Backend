@@ -10,6 +10,7 @@ import categoryRouter from './routes/categoryRoutes.js';
 import walletRouter from './routes/walletRoutes.js';
 import tradeRouter from './routes/tradeRoutes.js';
 import positionRouter from './routes/positionRoutes.js';
+import userRouter from './routes/userRoutes.js';
 
 // Database
 import connectToDB from './database/mongodb.js';
@@ -97,6 +98,7 @@ app.get('/health', async (req, res) => {
 });
 
 // API Routes
+app.use('/api/user', userRouter);
 app.use('/api/categories', categoryRouter);
 app.use('/api/wallet', walletRouter);
 app.use('/api/trade', tradeRouter);
