@@ -4,15 +4,27 @@ class UserService {
     /**
      * Register or get existing user (called after Privy login)
      */
-    async registerUser(privyUserId, polygonWalletAddress) {
+    async registerUser(privyUserId, polygonWalletAddress, smartWalletAddress) {
         try {
             // Check if user already exists
             let user = await User.findOne({ privyUserId });
 
             if (user) {
-                // Update wallet address if provided and different
+                let updated = false;
+
+                // Update EOA wallet address if provided and different
                 if (polygonWalletAddress && user.polygonWalletAddress !== polygonWalletAddress) {
                     user.polygonWalletAddress = polygonWalletAddress;
+                    updated = true;
+                }
+
+                // Update smart wallet address if provided and different
+                if (smartWalletAddress && user.smartWalletAddress !== smartWalletAddress) {
+                    user.smartWalletAddress = smartWalletAddress;
+                    updated = true;
+                }
+
+                if (updated) {
                     await user.save();
                 }
 
@@ -27,6 +39,7 @@ class UserService {
             user = await User.create({
                 privyUserId,
                 polygonWalletAddress,
+                smartWalletAddress,
                 isOnboarded: false,
                 isActive: true
             });
@@ -71,7 +84,7 @@ class UserService {
      */
     async updateUser(privyUserId, updateData) {
         try {
-            const allowedFields = ['polygonWalletAddress', 'selectedCategories', 'isOnboarded'];
+            const allowedFields = ['polygonWalletAddress', 'smartWalletAddress', 'selectedCategories', 'isOnboarded'];
             const filteredUpdate = {};
 
             for (const field of allowedFields) {
@@ -109,12 +122,39 @@ class UserService {
     }
 
     /**
-     * Format user response (exclude sensitive fields)
+     * Get user by smart wallet address
+     */
+    async getUserBySmartWallet(smartWalletAddress) {
+        try {
+            const user = await User.findOne({ smartWalletAddress });
+
+            if (!user) {
+                return {
+                    success: false,
+                    user: null
+                };
+            }
+
+            return {
+                success: true,
+                user: this.formatUserResponse(user)
+            };
+        } catch (error) {
+            console.error('Error in getUserBySmartWallet:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Format user response (exclude sensitive fields like encrypted session keys)
      */
     formatUserResponse(user) {
         return {
             privyUserId: user.privyUserId,
             polygonWalletAddress: user.polygonWalletAddress,
+            smartWalletAddress: user.smartWalletAddress,
+            sessionSignerAddress: user.sessionSignerAddress,
+            sessionSignerExpiry: user.sessionSignerExpiry,
             usdcBalance: user.usdcBalance,
             maticBalance: user.maticBalance,
             totalTrades: user.totalTrades,

@@ -6,7 +6,7 @@ const userRouter = express.Router();
 // POST /api/user/register - Register new user or get existing (called after Privy login)
 userRouter.post('/register', async (req, res) => {
     try {
-        const { privyUserId, polygonWalletAddress } = req.body;
+        const { privyUserId, polygonWalletAddress, smartWalletAddress } = req.body;
 
         if (!privyUserId) {
             return res.status(400).json({
@@ -15,7 +15,7 @@ userRouter.post('/register', async (req, res) => {
             });
         }
 
-        const result = await userService.registerUser(privyUserId, polygonWalletAddress);
+        const result = await userService.registerUser(privyUserId, polygonWalletAddress, smartWalletAddress);
 
         res.status(200).json({
             success: true,
@@ -100,6 +100,41 @@ userRouter.put('/:privyUserId', async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Failed to update user',
+            error: error.message
+        });
+    }
+});
+
+// GET /api/user/wallet/:smartWalletAddress - Get user by smart wallet address
+userRouter.get('/wallet/:smartWalletAddress', async (req, res) => {
+    try {
+        const { smartWalletAddress } = req.params;
+
+        if (!smartWalletAddress) {
+            return res.status(400).json({
+                success: false,
+                message: 'smartWalletAddress is required'
+            });
+        }
+
+        const result = await userService.getUserBySmartWallet(smartWalletAddress);
+
+        if (!result.success) {
+            return res.status(404).json({
+                success: false,
+                message: 'User not found'
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            data: result.user
+        });
+    } catch (error) {
+        console.error('Error getting user by smart wallet:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to get user',
             error: error.message
         });
     }

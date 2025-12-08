@@ -13,6 +13,12 @@ const userSchema = new mongoose.Schema({
         unique: true,
         sparse: true
     },
+    smartWalletAddress: {
+        type: String,
+        unique: true,
+        sparse: true,
+        index: true
+    },
     sessionSignerAddress: {
         type: String,
         default: null
@@ -62,6 +68,7 @@ const userSchema = new mongoose.Schema({
 // Useful indexes
 userSchema.index({ privyUserId: 1 });
 userSchema.index({ polygonWalletAddress: 1 });
+userSchema.index({ smartWalletAddress: 1 });
 
 const User = mongoose.model('User', userSchema);
 
