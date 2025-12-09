@@ -12,12 +12,12 @@ export interface AuthenticatedRequest extends Request {
 // User Request Bodies
 export interface RegisterUserRequestBody {
   privyUserId: string;
-  polygonWalletAddress?: string;
+  eoaAddress?: string;
   smartWalletAddress?: string;
 }
 
 export interface UpdateUserRequestBody {
-  polygonWalletAddress?: string;
+  eoaAddress?: string;
   smartWalletAddress?: string;
   selectedCategories?: string[];
   isOnboarded?: boolean;

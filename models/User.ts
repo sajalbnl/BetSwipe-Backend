@@ -9,7 +9,7 @@ const userSchema = new Schema<IUser>({
         unique: true,
         index: true
     },
-    polygonWalletAddress: {
+    eoaAddress: {
         type: String,
         unique: true,
         sparse: true
@@ -32,14 +32,6 @@ const userSchema = new Schema<IUser>({
         type: Date,
         default: null
     },
-    usdcBalance: {
-        type: Number,
-        default: 0
-    },
-    maticBalance: {
-        type: Number,
-        default: 0
-    },
     totalTrades: {
         type: Number,
         default: 0
@@ -47,13 +39,6 @@ const userSchema = new Schema<IUser>({
     totalVolume: {
         type: Number,
         default: 0
-    },
-    lastBalanceUpdate: {
-        type: Date,
-        default: Date.now
-    },
-    depositAddress: {
-        type: String
     },
     isActive: {
         type: Boolean,
@@ -71,7 +56,7 @@ const userSchema = new Schema<IUser>({
 
 // Useful indexes
 userSchema.index({ privyUserId: 1 });
-userSchema.index({ polygonWalletAddress: 1 });
+userSchema.index({ eoaAddress: 1 });
 userSchema.index({ smartWalletAddress: 1 });
 
 const User: Model<IUser> = mongoose.model<IUser>('User', userSchema);

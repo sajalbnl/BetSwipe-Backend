@@ -8,10 +8,6 @@ export interface BlockchainConfig {
   chainId: number;
 }
 
-export interface WalletBalance {
-  usdcBalance: number;
-  maticBalance: number;
-}
 
 // Polymarket Types
 export interface PolymarketOrder {
@@ -49,17 +45,15 @@ export interface ServiceResponse<T = any> {
 // User Service Types
 export interface CreateUserData {
   privyUserId: string;
-  polygonWalletAddress?: string;
+  eoaAddress?: string;
   smartWalletAddress?: string;
 }
 
 export interface UpdateUserData {
-  polygonWalletAddress?: string;
+  eoaAddress?: string;
   smartWalletAddress?: string;
   selectedCategories?: string[];
   isOnboarded?: boolean;
-  usdcBalance?: number;
-  maticBalance?: number;
   totalTrades?: number;
   totalVolume?: number;
 }

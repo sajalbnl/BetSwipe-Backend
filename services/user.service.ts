@@ -3,10 +3,8 @@ import { IUser, UpdateUserData } from '../types/index.js';
 
 interface UserServiceResponse {
     privyUserId: string;
-    polygonWalletAddress?: string;
+    eoaAddress?: string;
     smartWalletAddress?: string;
-    usdcBalance: number;
-    maticBalance: number;
     totalTrades: number;
     totalVolume: number;
     selectedCategories: string[];
@@ -39,7 +37,7 @@ class UserService {
      */
     async registerUser(
         privyUserId: string,
-        polygonWalletAddress?: string,
+        eoaAddress?: string,
         smartWalletAddress?: string
     ): Promise<RegisterUserResponse> {
         try {
@@ -50,8 +48,8 @@ class UserService {
                 let updated = false;
 
                 // Update EOA wallet address if provided and different
-                if (polygonWalletAddress && user.polygonWalletAddress !== polygonWalletAddress) {
-                    user.polygonWalletAddress = polygonWalletAddress;
+                if (eoaAddress && user.eoaAddress !== eoaAddress) {
+                    user.eoaAddress = eoaAddress;
                     updated = true;
                 }
 
@@ -75,7 +73,7 @@ class UserService {
             // Create new user
             user = await User.create({
                 privyUserId,
-                polygonWalletAddress,
+                eoaAddress,
                 smartWalletAddress,
                 isOnboarded: false,
                 isActive: true
@@ -121,7 +119,7 @@ class UserService {
      */
     async updateUser(privyUserId: string, updateData: UpdateUserData): Promise<UpdateUserResponse> {
         try {
-            const allowedFields = ['polygonWalletAddress', 'smartWalletAddress', 'selectedCategories', 'isOnboarded'];
+            const allowedFields = ['eoaAddress', 'smartWalletAddress', 'selectedCategories', 'isOnboarded'];
             const filteredUpdate: Partial<UpdateUserData> = {};
 
             for (const field of allowedFields) {
@@ -188,10 +186,8 @@ class UserService {
     formatUserResponse(user: IUser): UserServiceResponse {
         return {
             privyUserId: user.privyUserId,
-            polygonWalletAddress: user.polygonWalletAddress,
+            eoaAddress: user.eoaAddress,
             smartWalletAddress: user.smartWalletAddress,
-            usdcBalance: user.usdcBalance,
-            maticBalance: user.maticBalance,
             totalTrades: user.totalTrades,
             totalVolume: user.totalVolume,
             selectedCategories: user.selectedCategories || [],

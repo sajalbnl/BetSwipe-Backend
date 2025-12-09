@@ -76,7 +76,7 @@ class DepositDetector {
 
             // Get all wallet addresses
             const wallets = await User.find({ isActive: true })
-                .select('polygonWalletAddress privyUserId')
+                .select('eoaAddress privyUserId')
                 .lean();
 
             if (wallets.length === 0) {
@@ -87,8 +87,8 @@ class DepositDetector {
             // Create address to privyUserId map
             const addressMap: AddressMap = {};
             wallets.forEach(w => {
-                if (w.polygonWalletAddress) {
-                    addressMap[w.polygonWalletAddress.toLowerCase()] = w.privyUserId;
+                if (w.eoaAddress) {
+                    addressMap[w.eoaAddress.toLowerCase()] = w.privyUserId;
                 }
             });
 
@@ -182,24 +182,14 @@ class DepositDetector {
                     return;
                 }
 
-                // Update wallet balance
-                const wallet = await User.findOne({ privyUserId });
-                if (wallet) {
-                    const oldBalance = wallet.usdcBalance;
-                    wallet.usdcBalance += parseFloat(deposit.amount);
-                    wallet.lastBalanceUpdate = new Date();
-                    await wallet.save();
+                logger.info(`Deposit detected for user ${privyUserId}:`, {
+                    amount: deposit.amount,
+                    txHash: deposit.txHash,
+                    to: deposit.to
+                });
 
-                    logger.info(`Deposit detected for user ${privyUserId}:`, {
-                        amount: deposit.amount,
-                        txHash: deposit.txHash,
-                        oldBalance,
-                        newBalance: wallet.usdcBalance
-                    });
-
-                    // TODO: Send notification to user
-                    // TODO: Emit websocket event for real-time update
-                }
+                // TODO: Send notification to user
+                // TODO: Emit websocket event for real-time update
             } catch (error) {
                 logger.error(`Error processing deposit for ${deposit.to}:`, error);
             }
@@ -216,16 +206,12 @@ class DepositDetector {
         usdcContract.on('Transfer', async (from: string, to: string, value: bigint) => {
             try {
                 const wallet = await User.findOne({
-                    polygonWalletAddress: to.toLowerCase()
+                    eoaAddress: to.toLowerCase()
                 });
 
                 if (wallet) {
                     const amount = formatUSDC(value);
                     logger.info(`Real-time deposit detected for ${wallet.privyUserId}: ${amount} USDC`);
-
-                    // Update balance
-                    wallet.usdcBalance += parseFloat(amount);
-                    await wallet.save();
 
                     // TODO: Emit websocket event
                 }

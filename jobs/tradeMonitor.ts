@@ -144,6 +144,7 @@ class TradeMonitor {
                         results.failed++;
                         break;
                 }
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } catch (error: any) {
                 logger.error(`Error processing trade ${trade._id}:`, error);
                 results.failed++;
@@ -222,18 +223,18 @@ class TradeMonitor {
             trade.status = 'CANCELLED';
             await trade.save();
 
-            // Refund the user
+            // Update user stats
             const wallet = await User.findOne({ privyUserId: trade.privyUserId });
             if (wallet) {
-                wallet.usdcBalance += trade.amount;
                 wallet.totalTrades -= 1;
                 wallet.totalVolume -= trade.amount;
                 await wallet.save();
 
-                logger.info(`Refunded ${trade.amount} USDC to user ${trade.privyUserId}`);
+                logger.info(`Updated stats for user ${trade.privyUserId} after trade cancellation`);
             }
 
-            logger.info(`Trade ${trade._id} cancelled and refunded`);
+            // TODO: Handle refund via smart contract
+            logger.info(`Trade ${trade._id} cancelled`);
         } catch (error) {
             logger.error(`Error handling cancelled trade ${trade._id}:`, error);
             throw error;
@@ -249,17 +250,17 @@ class TradeMonitor {
             trade.errorMessage = errorMessage || 'Trade failed';
             await trade.save();
 
-            // Refund the user
+            // Update user stats
             const wallet = await User.findOne({ privyUserId: trade.privyUserId });
             if (wallet) {
-                wallet.usdcBalance += trade.amount;
                 wallet.totalTrades -= 1;
                 wallet.totalVolume -= trade.amount;
                 await wallet.save();
 
-                logger.info(`Refunded ${trade.amount} USDC to user ${trade.privyUserId} for failed trade`);
+                logger.info(`Updated stats for user ${trade.privyUserId} after failed trade`);
             }
 
+            // TODO: Handle refund via smart contract
             logger.error(`Trade ${trade._id} failed: ${errorMessage}`);
         } catch (error) {
             logger.error(`Error handling failed trade ${trade._id}:`, error);

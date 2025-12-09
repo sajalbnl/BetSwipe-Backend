@@ -44,16 +44,11 @@ class BalanceSync {
         try {
             logger.info('Starting balance sync job');
 
-            // Get wallets that need updating (oldest first)
-            const cutoffTime = new Date(Date.now() - 60000); // 1 minute ago
+            // Get active wallets
             const wallets = await User.find({
                 isActive: true,
-                $or: [
-                    { lastBalanceUpdate: { $lt: cutoffTime } },
-                    { lastBalanceUpdate: null }
-                ]
+                eoaAddress: { $exists: true, $ne: null }
             })
-            .sort({ lastBalanceUpdate: 1 })
             .limit(this.batchSize);
 
             if (wallets.length === 0) {
@@ -91,26 +86,21 @@ class BalanceSync {
         // Create batch requests
         const updatePromises = wallets.map(async (wallet) => {
             try {
-                if (!wallet.polygonWalletAddress) {
-                    throw new Error('Polygon wallet address is missing');
+                if (!wallet.eoaAddress) {
+                    throw new Error('EOA wallet address is missing');
                 }
                 // Parallel fetch both balances
                 const [usdcBalance, maticBalance] = await Promise.all([
-                    usdcContract.balanceOf(wallet.polygonWalletAddress),
-                    provider.getBalance(wallet.polygonWalletAddress)
+                    usdcContract.balanceOf(wallet.eoaAddress),
+                    provider.getBalance(wallet.eoaAddress)
                 ]);
 
-                // Update wallet
-                wallet.usdcBalance = parseFloat(formatUSDC(usdcBalance));
-                wallet.maticBalance = parseFloat(formatMATIC(maticBalance));
-                wallet.lastBalanceUpdate = new Date();
-
-                await wallet.save();
                 results.success++;
 
                 // Log significant balance changes
-                if (wallet.usdcBalance > 100) {
-                    logger.info(`High balance detected for ${wallet.privyUserId}: $${wallet.usdcBalance}`);
+                const usdcBalanceFormatted = parseFloat(formatUSDC(usdcBalance));
+                if (usdcBalanceFormatted > 100) {
+                    logger.info(`High balance detected for ${wallet.privyUserId}: $${usdcBalanceFormatted}`);
                 }
             } catch (error: any) {
                 results.failed++;
@@ -132,12 +122,25 @@ class BalanceSync {
     async checkLowMaticBalances(): Promise<IUser[]> {
         try {
             const lowMaticThreshold = 0.1; // 0.1 MATIC
+            const lowBalanceWallets: IUser[] = [];
 
-            const lowBalanceWallets = await User.find({
+            const wallets = await User.find({
                 isActive: true,
-                maticBalance: { $lt: lowMaticThreshold },
-                usdcBalance: { $gt: 10 } // Has USDC but low MATIC
+                eoaAddress: { $exists: true, $ne: null }
             });
+
+            for (const wallet of wallets) {
+                try {
+                    const maticBalance = await provider.getBalance(wallet.eoaAddress!);
+                    const maticBalanceFormatted = parseFloat(formatMATIC(maticBalance));
+
+                    if (maticBalanceFormatted < lowMaticThreshold) {
+                        lowBalanceWallets.push(wallet);
+                    }
+                } catch (error) {
+                    logger.error(`Error checking MATIC balance for ${wallet.privyUserId}:`, error);
+                }
+            }
 
             if (lowBalanceWallets.length > 0) {
                 logger.warn(`${lowBalanceWallets.length} wallets have low MATIC balance`);

@@ -25,20 +25,11 @@ export interface UserResponse {
   user: IUser;
 }
 
-export interface UserBalanceResponse {
-  privyUserId: string;
-  usdcBalance: number;
-  maticBalance: number;
-  lastBalanceUpdate: Date;
-}
-
 // Wallet Responses
 export interface WalletResponse {
   privyUserId: string;
-  polygonWalletAddress: string;
+  eoaAddress: string;
   smartWalletAddress?: string;
-  usdcBalance: number;
-  maticBalance: number;
 }
 
 export interface SessionSignerResponse {

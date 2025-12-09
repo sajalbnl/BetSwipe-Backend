@@ -40,11 +40,11 @@ walletRouter.get('/:privyUserId', async (req: Request<{ privyUserId: string }>, 
     try {
         const { privyUserId } = req.params;
 
-        const result = await walletService.getWalletBalance(privyUserId);
+        const result = await walletService.getOrCreateWallet(privyUserId);
 
         res.status(200).json({
             success: true,
-            data: result.balances
+            data: result.wallet
         });
     } catch (error: any) {
         console.error('Error getting wallet:', error);

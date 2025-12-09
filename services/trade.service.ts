@@ -68,15 +68,16 @@ class TradeService {
         let trade: any = null;
 
         try {
-            // Validate user wallet and balance
+            // Validate user wallet
             const wallet = await User.findOne({ privyUserId });
             if (!wallet) {
                 throw new Error('Wallet not found');
             }
 
-            if (wallet.usdcBalance < amount) {
-                throw new Error('Insufficient USDC balance');
-            }
+            // TODO: Balance check should be done on-chain or via smart contract
+            // if (wallet.usdcBalance < amount) {
+            //     throw new Error('Insufficient USDC balance');
+            // }
 
             // Get current market price
             const priceData = await polymarketService.getMarketPrice(marketId);
@@ -113,8 +114,7 @@ class TradeService {
             trade.status = 'CONFIRMED';
             await trade.save();
 
-            // Update wallet balance and stats
-            wallet.usdcBalance -= amount;
+            // Update wallet stats
             wallet.totalTrades += 1;
             wallet.totalVolume += amount;
             await wallet.save();
@@ -206,12 +206,12 @@ class TradeService {
                     } else if (orderStatus.order.state === 'CANCELLED') {
                         trade.status = 'CANCELLED';
 
-                        // Refund the user
-                        const wallet = await User.findOne({ privyUserId: trade.privyUserId });
-                        if (wallet) {
-                            wallet.usdcBalance += trade.amount;
-                            await wallet.save();
-                        }
+                        // TODO: Handle refund via smart contract
+                        // const wallet = await User.findOne({ privyUserId: trade.privyUserId });
+                        // if (wallet) {
+                        //     wallet.usdcBalance += trade.amount;
+                        //     await wallet.save();
+                        // }
                     }
 
                     await trade.save();

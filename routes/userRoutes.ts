@@ -7,7 +7,7 @@ const userRouter: Router = express.Router();
 // POST /api/user/register - Register new user or get existing (called after Privy login)
 userRouter.post('/register', async (req: Request<{}, {}, RegisterUserRequestBody>, res: Response): Promise<void> => {
     try {
-        const { privyUserId, polygonWalletAddress, smartWalletAddress } = req.body;
+        const { privyUserId, eoaAddress, smartWalletAddress } = req.body;
 
         if (!privyUserId) {
             res.status(400).json({
@@ -17,7 +17,7 @@ userRouter.post('/register', async (req: Request<{}, {}, RegisterUserRequestBody
             return;
         }
 
-        const result = await userService.registerUser(privyUserId, polygonWalletAddress, smartWalletAddress);
+        const result = await userService.registerUser(privyUserId, eoaAddress, smartWalletAddress);
 
         res.status(200).json({
             success: true,

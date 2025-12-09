@@ -4,17 +4,13 @@ import { Document, Types } from 'mongoose';
 export interface IUser extends Document {
   _id: Types.ObjectId;
   privyUserId: string;
-  polygonWalletAddress?: string;
+  eoaAddress?: string;
   smartWalletAddress?: string;
   sessionSignerAddress?: string | null;
   sessionSignerEncrypted?: string | null;
   sessionSignerExpiry?: Date | null;
-  usdcBalance: number;
-  maticBalance: number;
   totalTrades: number;
   totalVolume: number;
-  lastBalanceUpdate: Date;
-  depositAddress?: string;
   isActive: boolean;
   selectedCategories: string[];
   isOnboarded: boolean;
