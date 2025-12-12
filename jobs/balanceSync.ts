@@ -90,7 +90,7 @@ class BalanceSync {
                     throw new Error('EOA wallet address is missing');
                 }
                 // Parallel fetch both balances
-                const [usdcBalance, maticBalance] = await Promise.all([
+                const [usdcBalance] = await Promise.all([
                     usdcContract.balanceOf(wallet.eoaAddress),
                     provider.getBalance(wallet.eoaAddress)
                 ]);
@@ -102,11 +102,11 @@ class BalanceSync {
                 if (usdcBalanceFormatted > 100) {
                     logger.info(`High balance detected for ${wallet.privyUserId}: $${usdcBalanceFormatted}`);
                 }
-            } catch (error: any) {
+            } catch (error: unknown) {
                 results.failed++;
                 results.errors.push({
                     privyUserId: wallet.privyUserId,
-                    error: error.message
+                    error: error instanceof Error ? error.message : 'Unknown error'
                 });
                 logger.error(`Failed to update balance for ${wallet.privyUserId}:`, error);
             }

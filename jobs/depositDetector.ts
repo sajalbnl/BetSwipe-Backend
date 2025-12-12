@@ -201,27 +201,27 @@ class DepositDetector {
     /**
      * Setup real-time listener (alternative approach)
      */
-    setupRealtimeListener(): void {
-        // Listen for Transfer events in real-time
-        usdcContract.on('Transfer', async (from: string, to: string, value: bigint) => {
-            try {
-                const wallet = await User.findOne({
-                    eoaAddress: to.toLowerCase()
-                });
+    // setupRealtimeListener(): void {
+    //     // Listen for Transfer events in real-time
+    //     usdcContract.on('Transfer', async (from: string, to: string, value: bigint) => {
+    //         try {
+    //             const wallet = await User.findOne({
+    //                 eoaAddress: to.toLowerCase()
+    //             });
 
-                if (wallet) {
-                    const amount = formatUSDC(value);
-                    logger.info(`Real-time deposit detected for ${wallet.privyUserId}: ${amount} USDC`);
+    //             if (wallet) {
+    //                 const amount = formatUSDC(value);
+    //                 logger.info(`Real-time deposit detected for ${wallet.privyUserId}: ${amount} USDC`);
 
-                    // TODO: Emit websocket event
-                }
-            } catch (error) {
-                logger.error('Error processing real-time deposit:', error);
-            }
-        });
+    //                 // TODO: Emit websocket event
+    //             }
+    //         } catch (error) {
+    //             logger.error('Error processing real-time deposit:', error);
+    //         }
+    //     });
 
-        logger.info('Real-time deposit listener setup complete');
-    }
+    //     logger.info('Real-time deposit listener setup complete');
+    // }
 }
 
 export default new DepositDetector();

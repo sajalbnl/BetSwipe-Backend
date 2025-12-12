@@ -45,8 +45,8 @@ export interface ITrade extends Document {
   fees: number;
   errorMessage?: string | null;
   executedAt?: Date | null;
-  requestPayload?: any;
-  responsePayload?: any;
+  requestPayload?: unknown;
+  responsePayload?: unknown;
   createdAt: Date;
   updatedAt: Date;
 }

@@ -17,11 +17,11 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
-    "@polymarket/clob-client": "^5.0.0",
+    "@polymarket/clob-client": "^5.1.0",
     "@privy-io/node": "^0.6.1",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
-    "ethers": "^6.15.0",
+    "ethers": "^6.16.0",
     "express": "^5.1.0",
     "express-rate-limit": "^8.2.1",
     "mongodb": "^7.0.0",
